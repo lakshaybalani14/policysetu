@@ -1,0 +1,998 @@
+{
+  "policies": [
+    {
+      "id": 1,
+      "name": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+      "sector": "Agriculture",
+      "description": "Direct income support to farmers. ₹6,000 per year in three equal installments.",
+      "detailedDescription": "PM-KISAN is a Central Sector scheme with 100% funding from Government of India. It provides income support to all landholding farmers' families across the country, to supplement their financial needs for procuring various inputs related to agriculture and allied activities as well as domestic needs.",
+      "benefitAmount": 6000,
+      "benefitType": "Annual",
+      "status": "active",
+      "featured": true,
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 100,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Farmer",
+          "Agricultural Worker"
+        ],
+        "beneficiaryCategory": [
+          "Farmers",
+          "Small & Marginal Farmers"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Land Ownership Certificate",
+        "Aadhaar Card",
+        "Bank Account Details"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "30-45 days",
+      "department": "Ministry of Agriculture & Farmers Welfare",
+      "amendments": [
+        {
+          "date": "2024-06-15",
+          "description": "Increased installment amount from ₹2,000 to ₹2,000 per installment",
+          "changedBy": "Ministry of Agriculture"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "National Scholarship Scheme",
+      "sector": "Education",
+      "description": "Financial assistance for meritorious students from economically weaker sections.",
+      "detailedDescription": "This scholarship scheme aims to provide financial assistance to meritorious students belonging to economically weaker sections to meet their expenses on education. The scheme covers tuition fees, maintenance allowance, and book allowance.",
+      "benefitAmount": 50000,
+      "benefitType": "Annual",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 16,
+        "ageMax": 30,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": 250000,
+        "occupation": [
+          "Student"
+        ],
+        "beneficiaryCategory": [
+          "Students",
+          "SC/ST",
+          "OBC",
+          "Economically Weaker Section"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "10th Pass",
+          "12th Pass",
+          "Graduate",
+          "Post Graduate"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Income Certificate",
+        "Mark Sheets",
+        "Aadhaar Card",
+        "Bank Account Details",
+        "Caste Certificate (if applicable)"
+      ],
+      "applicationDeadline": "2026-09-30",
+      "processingTime": "60-90 days",
+      "department": "Ministry of Education",
+      "amendments": []
+    },
+    {
+      "id": 3,
+      "name": "Ayushman Bharat - PM-JAY",
+      "sector": "Health",
+      "description": "Health insurance coverage of ₹5 lakh per family per year.",
+      "detailedDescription": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY) is the world's largest health insurance scheme fully financed by the government. It provides health cover of ₹5 lakhs per family per year for secondary and tertiary care hospitalization.",
+      "benefitAmount": 500000,
+      "benefitType": "Coverage",
+      "status": "active",
+      "featured": true,
+      "eligibility": {
+        "ageMin": 0,
+        "ageMax": 100,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": 100000,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "BPL",
+          "Economically Weaker Section",
+          "Rural Population"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Aadhaar Card",
+        "Ration Card",
+        "Income Certificate"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "15-30 days",
+      "department": "Ministry of Health & Family Welfare",
+      "amendments": [
+        {
+          "date": "2025-01-10",
+          "description": "Extended coverage to include mental health treatments",
+          "changedBy": "Ministry of Health"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "PMAY - Pradhan Mantri Awas Yojana",
+      "sector": "Housing",
+      "description": "Subsidy for affordable housing for economically weaker sections.",
+      "detailedDescription": "PMAY aims to provide affordable housing to the urban poor by 2026. The scheme offers credit-linked subsidy on home loans, in-situ rehabilitation of slum dwellers, and affordable housing in partnership with private and public sectors.",
+      "benefitAmount": 250000,
+      "benefitType": "One-time",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 21,
+        "ageMax": 70,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": 600000,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "Economically Weaker Section",
+          "Low Income Group",
+          "Middle Income Group"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Income Certificate",
+        "Property Documents",
+        "Aadhaar Card",
+        "Bank Account Details",
+        "No Property Certificate"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "90-120 days",
+      "department": "Ministry of Housing & Urban Affairs",
+      "amendments": []
+    },
+    {
+      "id": 5,
+      "name": "MUDRA Loan Scheme",
+      "sector": "MSME",
+      "description": "Loans up to ₹10 lakh for micro and small enterprises.",
+      "detailedDescription": "Pradhan Mantri MUDRA Yojana (PMMY) provides loans to non-corporate, non-farm small/micro enterprises. These loans are classified as MUDRA loans under PMMY and are given by Commercial Banks, RRBs, Small Finance Banks, MFIs and NBFCs.",
+      "benefitAmount": 1000000,
+      "benefitType": "Loan",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 65,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Business Owner",
+          "Self Employed",
+          "Entrepreneur"
+        ],
+        "beneficiaryCategory": [
+          "MSMEs",
+          "Small Business Owners",
+          "Women Entrepreneurs"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Business Plan",
+        "Identity Proof",
+        "Address Proof",
+        "Bank Statements",
+        "Business Registration (if any)"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "30-60 days",
+      "department": "Ministry of Micro, Small & Medium Enterprises",
+      "amendments": []
+    },
+    {
+      "id": 6,
+      "name": "Beti Bachao Beti Padhao",
+      "sector": "Women & Child",
+      "description": "Scheme to promote education and welfare of girl children.",
+      "detailedDescription": "Beti Bachao Beti Padhao is a personal campaign of the Government of India that aims to generate awareness and improve the efficiency of welfare services intended for girls. The scheme provides financial assistance for education and skill development.",
+      "benefitAmount": 150000,
+      "benefitType": "Conditional",
+      "status": "active",
+      "featured": true,
+      "eligibility": {
+        "ageMin": 0,
+        "ageMax": 21,
+        "gender": [
+          "female"
+        ],
+        "incomeMax": 500000,
+        "occupation": [
+          "Student",
+          "Dependent"
+        ],
+        "beneficiaryCategory": [
+          "Women",
+          "Girl Child",
+          "Students"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Unmarried"
+        ]
+      },
+      "documents": [
+        "Birth Certificate",
+        "School Enrollment Certificate",
+        "Aadhaar Card",
+        "Bank Account Details",
+        "Income Certificate"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "45-60 days",
+      "department": "Ministry of Women & Child Development",
+      "amendments": []
+    },
+    {
+      "id": 7,
+      "name": "Kisan Credit Card (KCC)",
+      "sector": "Agriculture",
+      "description": "Credit facility for farmers to meet agricultural expenses.",
+      "detailedDescription": "KCC scheme provides adequate and timely credit support from the banking system to farmers for their cultivation and other needs including purchase of agricultural inputs, draw cash for their production needs and investment in allied activities.",
+      "benefitAmount": 300000,
+      "benefitType": "Credit Limit",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 75,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Farmer",
+          "Agricultural Worker"
+        ],
+        "beneficiaryCategory": [
+          "Farmers",
+          "Small & Marginal Farmers",
+          "Tenant Farmers"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Land Records",
+        "Identity Proof",
+        "Address Proof",
+        "Passport Photo"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "15-30 days",
+      "department": "Ministry of Agriculture & Farmers Welfare",
+      "amendments": []
+    },
+    {
+      "id": 8,
+      "name": "Stand Up India Scheme",
+      "sector": "MSME",
+      "description": "Bank loans for SC/ST and women entrepreneurs.",
+      "detailedDescription": "Stand-Up India Scheme facilitates bank loans between ₹10 lakh and ₹1 Crore to at least one Scheduled Caste (SC) or Scheduled Tribe (ST) borrower and at least one woman borrower per bank branch for setting up a greenfield enterprise.",
+      "benefitAmount": 10000000,
+      "benefitType": "Loan",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 65,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Business Owner",
+          "Entrepreneur"
+        ],
+        "beneficiaryCategory": [
+          "SC/ST",
+          "Women",
+          "Women Entrepreneurs"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Business Plan",
+        "Project Report",
+        "Identity Proof",
+        "Caste Certificate (for SC/ST)",
+        "Address Proof"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "60-90 days",
+      "department": "Ministry of Micro, Small & Medium Enterprises",
+      "amendments": []
+    },
+    {
+      "id": 9,
+      "name": "National Pension Scheme (NPS)",
+      "sector": "Social Security",
+      "description": "Voluntary retirement savings scheme for all citizens.",
+      "detailedDescription": "NPS is a voluntary, defined contribution retirement savings scheme designed to enable systematic savings. It is regulated by Pension Fund Regulatory and Development Authority (PFRDA) established by Government of India.",
+      "benefitAmount": 0,
+      "benefitType": "Pension",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 70,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "All Citizens",
+          "Government Employees",
+          "Private Sector Employees"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Aadhaar Card",
+        "PAN Card",
+        "Bank Account Details",
+        "Address Proof"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "7-15 days",
+      "department": "Ministry of Finance",
+      "amendments": []
+    },
+    {
+      "id": 10,
+      "name": "Skill India - PMKVY",
+      "sector": "Skill Development",
+      "description": "Free skill training and certification for youth.",
+      "detailedDescription": "Pradhan Mantri Kaushal Vikas Yojana (PMKVY) is the flagship scheme of the Ministry of Skill Development & Entrepreneurship (MSDE). The objective is to enable Indian youth to take up industry-relevant skill training.",
+      "benefitAmount": 8000,
+      "benefitType": "Training + Stipend",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 15,
+        "ageMax": 45,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Student",
+          "Unemployed",
+          "Job Seeker"
+        ],
+        "beneficiaryCategory": [
+          "Youth",
+          "School Dropouts",
+          "Unemployed"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "8th Pass",
+          "10th Pass",
+          "12th Pass",
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Aadhaar Card",
+        "Educational Certificate",
+        "Bank Account Details"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "15-30 days",
+      "department": "Ministry of Skill Development & Entrepreneurship",
+      "amendments": []
+    },
+    {
+      "id": 11,
+      "name": "Atal Pension Yojana (APY)",
+      "sector": "Social Security",
+      "description": "Guaranteed pension scheme for unorganized sector workers.",
+      "detailedDescription": "APY is open to all bank account holders in the age group of 18-40 years and the contributions differ based on pension amount chosen. Subscribers would receive guaranteed minimum monthly pension of ₹1,000 or ₹2,000 or ₹3,000 or ₹4,000 or ₹5,000 at the age of 60 years.",
+      "benefitAmount": 5000,
+      "benefitType": "Monthly Pension",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 40,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "Unorganized Sector Workers",
+          "All Citizens"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Aadhaar Card",
+        "Bank Account Details",
+        "Mobile Number"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "7-15 days",
+      "department": "Ministry of Finance",
+      "amendments": []
+    },
+    {
+      "id": 12,
+      "name": "PM Matru Vandana Yojana",
+      "sector": "Women & Child",
+      "description": "Maternity benefit for pregnant and lactating mothers.",
+      "detailedDescription": "PMMVY is a Centrally Sponsored Scheme with the cash incentive provided directly to the bank/post office account of Pregnant Women and Lactating Mothers (PW&LM). It provides partial compensation for wage loss in terms of cash incentive.",
+      "benefitAmount": 5000,
+      "benefitType": "One-time",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 19,
+        "ageMax": 45,
+        "gender": [
+          "female"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "Women",
+          "Pregnant Women",
+          "Lactating Mothers"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Married"
+        ]
+      },
+      "documents": [
+        "Pregnancy Certificate",
+        "Aadhaar Card",
+        "Bank Account Details",
+        "MCP Card"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "30-45 days",
+      "department": "Ministry of Women & Child Development",
+      "amendments": []
+    },
+    {
+      "id": 13,
+      "name": "PM Svanidhi Scheme",
+      "sector": "MSME",
+      "description": "Micro-credit facility for street vendors.",
+      "detailedDescription": "PM SVANidhi is a special micro-credit facility plan to provide affordable loans to street vendors to help them restart their businesses which have been adversely affected due to Covid-19 lockdown.",
+      "benefitAmount": 10000,
+      "benefitType": "Loan",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 65,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": 200000,
+        "occupation": [
+          "Street Vendor",
+          "Small Business Owner"
+        ],
+        "beneficiaryCategory": [
+          "Street Vendors",
+          "Urban Poor",
+          "Small Business Owners"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Vending Certificate",
+        "Identity Proof",
+        "Bank Account Details",
+        "Aadhaar Card"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "15-30 days",
+      "department": "Ministry of Housing & Urban Affairs",
+      "amendments": []
+    },
+    {
+      "id": 14,
+      "name": "Sukanya Samriddhi Yojana",
+      "sector": "Women & Child",
+      "description": "Savings scheme for girl child with attractive interest rates.",
+      "detailedDescription": "Sukanya Samriddhi Account can be opened any time after the birth of a girl till she turns 10, with a minimum deposit of ₹250. A maximum of ₹1.5 lakh can be deposited in a financial year. The account will mature after 21 years from the date of its opening.",
+      "benefitAmount": 0,
+      "benefitType": "Savings + Interest",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 0,
+        "ageMax": 10,
+        "gender": [
+          "female"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Dependent"
+        ],
+        "beneficiaryCategory": [
+          "Girl Child",
+          "Women"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Unmarried"
+        ]
+      },
+      "documents": [
+        "Birth Certificate",
+        "Parent's Identity Proof",
+        "Address Proof",
+        "Passport Photo"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "7-15 days",
+      "department": "Ministry of Finance",
+      "amendments": []
+    },
+    {
+      "id": 15,
+      "name": "PM Fasal Bima Yojana",
+      "sector": "Agriculture",
+      "description": "Crop insurance scheme for farmers.",
+      "detailedDescription": "PMFBY provides insurance coverage and financial support to farmers in the event of failure of any of the notified crop as a result of natural calamities, pests & diseases. It aims to stabilize the income of farmers to ensure their continuance in farming.",
+      "benefitAmount": 200000,
+      "benefitType": "Insurance Coverage",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 100,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Farmer",
+          "Agricultural Worker"
+        ],
+        "beneficiaryCategory": [
+          "Farmers",
+          "Small & Marginal Farmers",
+          "Tenant Farmers"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Land Records",
+        "Sowing Certificate",
+        "Aadhaar Card",
+        "Bank Account Details"
+      ],
+      "applicationDeadline": "2026-08-31",
+      "processingTime": "30-45 days",
+      "department": "Ministry of Agriculture & Farmers Welfare",
+      "amendments": []
+    },
+    {
+      "id": 16,
+      "name": "National Rural Livelihood Mission",
+      "sector": "Rural Development",
+      "description": "Poverty alleviation program for rural households.",
+      "detailedDescription": "NRLM aims to create efficient and effective institutional platforms for the rural poor, enabling them to increase household income through sustainable livelihood enhancements and improved access to financial services.",
+      "benefitAmount": 100000,
+      "benefitType": "Financial Assistance",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 60,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": 100000,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "BPL",
+          "Rural Population",
+          "Women"
+        ],
+        "residency": [
+          "Rural Areas"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "BPL Certificate",
+        "Aadhaar Card",
+        "Bank Account Details",
+        "Address Proof"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "60-90 days",
+      "department": "Ministry of Rural Development",
+      "amendments": []
+    },
+    {
+      "id": 17,
+      "name": "PM Ujjwala Yojana",
+      "sector": "Energy",
+      "description": "Free LPG connections to BPL households.",
+      "detailedDescription": "PMUY aims to safeguard the health of women & children by providing them with a clean cooking fuel – LPG, so that they don't have to compromise their health in smoky kitchens or wander in unsafe areas collecting firewood.",
+      "benefitAmount": 1600,
+      "benefitType": "One-time",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 100,
+        "gender": [
+          "female"
+        ],
+        "incomeMax": 100000,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "BPL",
+          "Women",
+          "Rural Population"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "BPL Certificate",
+        "Aadhaar Card",
+        "Bank Account Details",
+        "Address Proof"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "30-45 days",
+      "department": "Ministry of Petroleum & Natural Gas",
+      "amendments": []
+    },
+    {
+      "id": 18,
+      "name": "Startup India Scheme",
+      "sector": "MSME",
+      "description": "Support for startups including funding and tax benefits.",
+      "detailedDescription": "Startup India is a flagship initiative of the Government of India, intended to build a strong ecosystem for nurturing innovation and startups in the country. It provides tax exemptions, easier compliance, IPR fast-tracking, and funding support.",
+      "benefitAmount": 0,
+      "benefitType": "Tax Benefits + Support",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 21,
+        "ageMax": 50,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Entrepreneur",
+          "Business Owner"
+        ],
+        "beneficiaryCategory": [
+          "Startups",
+          "Entrepreneurs",
+          "Innovators"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Graduate",
+          "Post Graduate",
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Business Plan",
+        "Company Registration",
+        "PAN Card",
+        "Innovation Certificate"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "45-60 days",
+      "department": "Department for Promotion of Industry and Internal Trade",
+      "amendments": []
+    },
+    {
+      "id": 19,
+      "name": "PM Kaushal Vikas Yojana 3.0",
+      "sector": "Skill Development",
+      "description": "Advanced skill training with industry certification.",
+      "detailedDescription": "PMKVY 3.0 focuses on new age and COVID related skills. The scheme is being implemented with a total outlay of ₹948.90 crores for a period of 2020-2021. It aims to train 8 lakh candidates.",
+      "benefitAmount": 10000,
+      "benefitType": "Training + Certification",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 35,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": 500000,
+        "occupation": [
+          "Student",
+          "Unemployed",
+          "Job Seeker"
+        ],
+        "beneficiaryCategory": [
+          "Youth",
+          "Unemployed",
+          "Students"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "10th Pass",
+          "12th Pass",
+          "Graduate"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Aadhaar Card",
+        "Educational Certificate",
+        "Bank Account Details",
+        "Employment Exchange Card"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "15-30 days",
+      "department": "Ministry of Skill Development & Entrepreneurship",
+      "amendments": []
+    },
+    {
+      "id": 20,
+      "name": "Pradhan Mantri Jeevan Jyoti Bima Yojana",
+      "sector": "Insurance",
+      "description": "Life insurance scheme with ₹2 lakh coverage.",
+      "detailedDescription": "PMJJBY is available to people in the age group of 18 to 50 years having a bank account who give their consent to join. The scheme offers renewable one year life cover of ₹2 lakh at a premium of ₹436 per annum per member.",
+      "benefitAmount": 200000,
+      "benefitType": "Insurance Coverage",
+      "status": "active",
+      "eligibility": {
+        "ageMin": 18,
+        "ageMax": 50,
+        "gender": [
+          "male",
+          "female",
+          "other"
+        ],
+        "incomeMax": null,
+        "occupation": [
+          "Any"
+        ],
+        "beneficiaryCategory": [
+          "All Citizens"
+        ],
+        "residency": [
+          "All States"
+        ],
+        "education": [
+          "Any"
+        ],
+        "maritalStatus": [
+          "Any"
+        ]
+      },
+      "documents": [
+        "Aadhaar Card",
+        "Bank Account Details",
+        "Consent Form"
+      ],
+      "applicationDeadline": "2026-12-31",
+      "processingTime": "7-15 days",
+      "department": "Ministry of Finance",
+      "amendments": []
+    }
+  ],
+  "applications": [],
+  "payments": [],
+  "users": [
+    {
+      "id": "1707000000001",
+      "name": "Aditi Sharma",
+      "email": "aditi@example.com",
+      "password": "$2a$10$XFK6r1XCBLcsAJ4WXSoBqeCPr109w2.XIrPeg994k.Uke.nWogfCu",
+      "role": "user",
+      "createdAt": "2026-02-01T00:00:00.000Z"
+    },
+    {
+      "id": "1707000000002",
+      "name": "Admin User",
+      "email": "admin@test.com",
+      "password": "$2a$10$u66FAnhcO8MBdAHprLAa1.tSpio6KNTFcRyfVn9rbJPLBJY4qxpru",
+      "role": "admin",
+      "createdAt": "2026-02-01T00:00:00.000Z"
+    },
+    {
+      "id": "1770561278519",
+      "name": "Rahul",
+      "email": "123@gmail.com",
+      "password": "$2a$10$dYarAChUm5Ggn1U9pQzPN.Y8l2bgYyyKuma8YRBU3PYBO1OkW7QoG",
+      "role": "citizen",
+      "createdAt": "2026-02-08T14:34:38.519Z"
+    }
+  ]
+}
