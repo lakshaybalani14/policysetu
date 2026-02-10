@@ -22,15 +22,20 @@ The **Digital Governance Platform** is designed to streamline the process of fin
 
 | Login & Authentication | User Dashboard |
 | :---: | :---: |
-| ![Login Page](screenshots/login.png)<br>_Secure login for citizens and admins_ | ![User Dashboard](screenshots/dashboard.png)<br>_Overview of applications and benefits_ |
+| ![Login Page](screenshots/loginpage.png)<br>_Secure login for citizens and admins_ | ![User Dashboard](screenshots/userdashboard.png)<br>_Overview of applications and benefits_ |
 
 | Policy Discovery | Policy Listings |
 | :---: | :---: |
-| ![Policy Search](screenshots/policy_search.png)<br>_Smart search with filtering_ | ![Policy List](screenshots/policy_list.png)<br>_Detailed policy cards and categories_ |
+| ![Policy Home](screenshots/homepage.png)<br>_Smart search with filtering_ | ![Policy List](screenshots/policies.png)<br>_Detailed policy cards and categories_ |
 
 ### Application Tracking
-![Application Tracking](screenshots/application_tracking.png)
+![Application Timeline](screenshots/policytimeline.png)
 *Real-time status updates and timeline for submitted applications*
+
+### Admin Interface
+| Admin Dashboard | Applications Management |
+| :---: | :---: |
+| ![Admin Dashboard](screenshots/admindashboard.png) | ![Admin Applications](screenshots/admin_applications.png) |
 
 ## 🛠️ Tech Stack
 
