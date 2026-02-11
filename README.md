@@ -2,8 +2,7 @@
 
 > A modern, full-stack solution for bridging the gap between government schemes and citizens.
 
-![Project Banner](path/to/your/banner_image.png)
-*Replace with a screenshot of your Landing Page*
+![Project Banner](screenshots/homepage.png)
 
 ## 📋 Overview
 
@@ -26,7 +25,7 @@ The **Digital Governance Platform** is designed to streamline the process of fin
 
 | Policy Discovery | Policy Listings |
 | :---: | :---: |
-| ![Policy Home](screenshots/homepage.png)<br>_Smart search with filtering_ | ![Policy List](screenshots/policies.png)<br>_Detailed policy cards and categories_ |
+| Smart search with filtering_ | ![Policy List](screenshots/policies.png)<br>_Detailed policy cards and categories_ |
 
 ### Application Tracking
 ![Application Timeline](screenshots/policytimeline.png)
@@ -145,4 +144,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+

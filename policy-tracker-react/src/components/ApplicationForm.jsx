@@ -96,6 +96,9 @@ const ApplicationForm = ({ policy, onClose, onSubmit }) => {
             const { user, error: authError } = await authHelpers.getCurrentUser();
             if (authError || !user) throw new Error("User not authenticated");
 
+            console.log('User authenticated:', user.id);
+            console.log('Documents to upload:', documents);
+
             // 2. Prepare Application Data (excluding documents, we'll upload them separately)
             // Convert formData from camelCase to snake_case for database
             const dbFormData = {
@@ -130,15 +133,22 @@ const ApplicationForm = ({ policy, onClose, onSubmit }) => {
             const { data: appResponse, error: appError } = await applicationHelpers.create(applicationData);
             if (appError) throw appError;
 
+            console.log('Application created:', appResponse);
+
             // 4. Upload Documents
             if (documents.length > 0) {
-                const uploadPromises = documents.map(doc => {
+                console.log('Starting document uploads...');
+                const uploadPromises = documents.map(async (doc, index) => {
+                    console.log(`Uploading document ${index + 1}:`, doc.name);
                     // Upload each file and link to the new application ID
                     // Using 'other' as default type for now, or map doc.type if you add a selector
-                    return documentHelpers.uploadAndSave(doc.file, user.id, 'other', appResponse.id);
+                    const result = await documentHelpers.uploadAndSave(doc.file, 'other', appResponse.id);
+                    console.log(`Document ${index + 1} upload result:`, result);
+                    return result;
                 });
 
-                await Promise.all(uploadPromises);
+                const uploadResults = await Promise.all(uploadPromises);
+                console.log('All documents uploaded:', uploadResults);
             }
 
             // Success

@@ -125,12 +125,43 @@ export const applicationHelpers = {
     getUserApplications: async () => {
         const { data: { user } } = await supabase.auth.getUser();
 
+        // 1. Fetch applications
         const { data, error } = await supabase
             .from('applications')
             .select('*, policies(*)')
             .eq('user_id', user.id)
             .order('submitted_at', { ascending: false });
-        return { data: data?.map(transformApplicationData) || [], error };
+
+        if (error) return { data: [], error };
+
+        // 2. Fetch related documents manually
+        const appIds = data.map(app => app.id);
+        let documentsMap = {};
+
+        if (appIds.length > 0) {
+            const { data: docs } = await supabase
+                .from('documents')
+                .select('*')
+                .in('application_id', appIds);
+
+            if (docs) {
+                documentsMap = docs.reduce((acc, doc) => {
+                    if (!acc[doc.application_id]) {
+                        acc[doc.application_id] = [];
+                    }
+                    acc[doc.application_id].push(doc);
+                    return acc;
+                }, {});
+            }
+        }
+
+        // 3. Attach documents to applications
+        const formattedData = data.map(app => ({
+            ...transformApplicationData(app),
+            documents: documentsMap[app.id] || []
+        }));
+
+        return { data: formattedData, error };
     },
 
     updateStatus: async (id, status, remarks) => {
@@ -263,7 +294,7 @@ export const adminHelpers = {
 
     // Get all applications with details (admin only)
     getAllApplications: async () => {
-        // 1. Fetch applications (removed profiles join to avoid 400 error)
+        // 1. Fetch applications
         const { data, error } = await supabase
             .from('applications')
             .select(`
@@ -292,15 +323,52 @@ export const adminHelpers = {
             }
         }
 
-        // 3. Merge data
-        const formattedData = data.map(app => ({
-            ...transformApplicationData(app),
-            policyName: app.policies?.name,
-            applicantName: profilesMap[app.user_id]?.full_name || 'Unknown',
-            // Keep original raw objects just in case
-            policies: app.policies,
-            profiles: profilesMap[app.user_id]
-        }));
+
+        // 3. Fetch documents manually (to ensure we get them even if FK is missing)
+        const appIds = data.map(app => app.id);
+        let documentsMap = {};
+
+        if (appIds.length > 0) {
+            const { data: docs } = await supabase
+                .from('documents')
+                .select('*')
+                .in('application_id', appIds);
+
+            if (docs) {
+                // Group documents by application_id
+                documentsMap = docs.reduce((acc, doc) => {
+                    if (!acc[doc.application_id]) {
+                        acc[doc.application_id] = [];
+                    }
+                    acc[doc.application_id].push(doc);
+                    return acc;
+                }, {});
+            }
+        }
+
+        // 4. Merge all data
+        const formattedData = data.map(app => {
+            // Check both documents table AND JSONB field
+            let appDocuments = documentsMap[app.id] || [];
+
+            // If no documents from table, check JSONB field
+            if (appDocuments.length === 0 && app.documents) {
+                // If documents is a JSONB array, use it
+                if (Array.isArray(app.documents)) {
+                    appDocuments = app.documents;
+                }
+            }
+
+            return {
+                ...transformApplicationData(app),
+                policyName: app.policies?.name,
+                applicantName: profilesMap[app.user_id]?.full_name || 'Unknown',
+                documents: appDocuments, // Use merged documents
+                // Keep original raw objects just in case
+                policies: app.policies,
+                profiles: profilesMap[app.user_id]
+            };
+        });
 
         return { data: formattedData || [], error };
     },
@@ -380,39 +448,96 @@ export const storageHelpers = {
             .from(bucket)
             .createSignedUrl(path, expiresIn);
         return { data, error };
+    },
+
+    // Get download URL for documents
+    getDocumentDownloadUrl: async (bucket, path) => {
+        const { data, error } = await supabase.storage
+            .from(bucket)
+            .createSignedUrl(path, 3600); // 1 hour expiry
+        return { data, error };
+    },
+
+    // Download file directly
+    downloadFile: async (bucket, path) => {
+        const { data, error } = await supabase.storage
+            .from(bucket)
+            .download(path);
+        return { data, error };
     }
 };
 
 // Document helpers
 export const documentHelpers = {
-    uploadAndSave: async (file, userId, docType, applicationId = null) => {
-        // 1. Upload to Storage
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}/${Date.now()}_${docType}.${fileExt}`;
-        const bucket = 'application-documents';
+    uploadAndSave: async (file, docType, applicationId = null) => {
+        try {
+            // ✅ Correctly get user and error
+            const { data, error: authError } = await supabase.auth.getUser();
 
-        const { data: uploadData, error: uploadError } = await storageHelpers.uploadFile(bucket, fileName, file);
+            if (authError) {
+                console.error('[Upload] Auth error:', authError);
+                return { error: authError };
+            }
 
-        if (uploadError) return { error: uploadError };
+            if (!data?.user) {
+                console.error('[Upload] No authenticated user');
+                return { error: new Error('User not authenticated') };
+            }
 
-        // 2. Save Metadata to DB
-        const { data: docData, error: docError } = await supabase
-            .from('documents')
-            .insert([{
-                user_id: userId,
-                application_id: applicationId,
-                document_type: docType,
-                file_path: fileName,
-                storage_bucket: bucket,
-                file_name: file.name,
-                file_size: file.size,
-                content_type: file.type
-            }])
-            .select()
-            .single();
+            const userId = data.user.id;
 
-        return { data: docData, error: docError };
+            // ✅ Build correct file path
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${userId}/${Date.now()}_${docType}.${fileExt}`;
+            const bucket = 'application-documents';
+
+            console.log('[Upload] Uploading to path:', fileName);
+
+            // ✅ Upload file
+            const { data: uploadData, error: uploadError } =
+                await supabase.storage
+                    .from(bucket)
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: true
+                    });
+
+            if (uploadError) {
+                console.error('[Upload] Storage upload failed:', uploadError);
+                return { error: uploadError };
+            }
+
+            // ✅ Insert metadata
+            const { data: docData, error: docError } = await supabase
+                .from('documents')
+                .insert([
+                    {
+                        user_id: userId,
+                        application_id: applicationId,
+                        document_type: docType,
+                        file_path: fileName,
+                        storage_bucket: bucket,
+                        file_name: file.name,
+                        file_size: file.size,
+                        content_type: file.type
+                    }
+                ])
+                .select()
+                .single();
+
+            if (docError) {
+                console.error('[Upload] Database insert failed:', docError);
+                return { error: docError };
+            }
+
+            return { data: docData, error: null };
+
+        } catch (err) {
+            console.error('[Upload] Unexpected error:', err);
+            return { error: err };
+        }
     },
+
 
     getUserDocuments: async (userId) => {
         const { data, error } = await supabase

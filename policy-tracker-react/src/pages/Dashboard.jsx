@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { FileText, Clock, CheckCircle, AlertCircle, Plus, TrendingUp, DollarSign, Award, Bell } from 'lucide-react';
+import { FileText, Clock, CheckCircle, AlertCircle, Plus, TrendingUp, DollarSign, Award, Bell, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { applicationHelpers, paymentHelpers, policyHelpers, supabase } from '../services/supabase';
+import { applicationHelpers, paymentHelpers, policyHelpers, adminHelpers, supabase } from '../services/supabase';
 import { useLanguage } from '../context/LanguageContext';
 
 const Dashboard = ({ user }) => {
@@ -15,11 +15,23 @@ const Dashboard = ({ user }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [appsResult, paymentsResult, policiesResult] = await Promise.all([
-                    applicationHelpers.getUserApplications(),
-                    paymentHelpers.getUserPayments(),
-                    policyHelpers.getAll()
-                ]);
+                let appsResult, paymentsResult;
+
+                if (user.role === 'admin') {
+                    // Admin gets all data
+                    [appsResult, paymentsResult] = await Promise.all([
+                        adminHelpers.getAllApplications(),
+                        paymentHelpers.getAll()
+                    ]);
+                } else {
+                    // User gets only their data
+                    [appsResult, paymentsResult] = await Promise.all([
+                        applicationHelpers.getUserApplications(),
+                        paymentHelpers.getUserPayments()
+                    ]);
+                }
+
+                const policiesResult = await policyHelpers.getAll();
 
                 setApplications(appsResult.data || []);
                 setPayments(paymentsResult.data || []);
@@ -115,7 +127,9 @@ const Dashboard = ({ user }) => {
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent mb-2 capitalize">
                         {t('welcome_user', { name: (user?.name || user?.email || 'User').split('@')[0] })}
                     </h1>
-                    <p className="text-slate-600 dark:text-slate-400">Here's an overview of your applications </p>
+                    <p className="text-slate-600 dark:text-slate-400">
+                        {user.role === 'admin' ? "Here's an overview of all system applications" : "Here's an overview of your applications"}
+                    </p>
                 </motion.div>
 
                 {/* Stats Grid */}
@@ -213,24 +227,49 @@ const Dashboard = ({ user }) => {
                         >
                             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">{t('quick_actions')}</h3>
                             <div className="space-y-3">
-                                <Link
-                                    to="/policies"
-                                    className="flex items-center space-x-3 p-3 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/40 rounded-xl transition-colors group"
-                                >
-                                    <div className="p-2 bg-primary-600 rounded-lg text-white">
-                                        <Plus size={18} />
-                                    </div>
-                                    <span className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-primary-700 dark:group-hover:text-primary-300">{t('new_app')}</span>
-                                </Link>
-                                <Link
-                                    to="/my-applications"
-                                    className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors group"
-                                >
-                                    <div className="p-2 bg-slate-600 rounded-lg text-white">
-                                        <FileText size={18} />
-                                    </div>
-                                    <span className="font-medium text-slate-700 dark:text-slate-200">{t('track_app')}</span>
-                                </Link>
+                                {user?.role === 'admin' ? (
+                                    <>
+                                        <Link
+                                            to="/admin?tab=applications"
+                                            className="flex items-center space-x-3 p-3 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/40 rounded-xl transition-colors group"
+                                        >
+                                            <div className="p-2 bg-primary-600 rounded-lg text-white">
+                                                <FileText size={18} />
+                                            </div>
+                                            <span className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-primary-700 dark:group-hover:text-primary-300">View Applications</span>
+                                        </Link>
+                                        <Link
+                                            to="/admin?tab=analytics"
+                                            className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors group"
+                                        >
+                                            <div className="p-2 bg-slate-600 rounded-lg text-white">
+                                                <BarChart3 size={18} />
+                                            </div>
+                                            <span className="font-medium text-slate-700 dark:text-slate-200">View Analysis</span>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link
+                                            to="/policies"
+                                            className="flex items-center space-x-3 p-3 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/40 rounded-xl transition-colors group"
+                                        >
+                                            <div className="p-2 bg-primary-600 rounded-lg text-white">
+                                                <Plus size={18} />
+                                            </div>
+                                            <span className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-primary-700 dark:group-hover:text-primary-300">{t('new_app')}</span>
+                                        </Link>
+                                        <Link
+                                            to="/my-applications"
+                                            className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors group"
+                                        >
+                                            <div className="p-2 bg-slate-600 rounded-lg text-white">
+                                                <FileText size={18} />
+                                            </div>
+                                            <span className="font-medium text-slate-700 dark:text-slate-200">{t('track_app')}</span>
+                                        </Link>
+                                    </>
+                                )}
                             </div>
                         </motion.div>
 
