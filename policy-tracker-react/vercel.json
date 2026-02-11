@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/backboard/:path*",
+      "destination": "https://api.backboard.io/v1/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
