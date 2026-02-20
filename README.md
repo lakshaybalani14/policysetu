@@ -134,7 +134,7 @@ policysetu/
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+All Contributions are welcome! Please feel free to submit a Pull Request.
 
 1.  Fork the project
 2.  Create your Feature Branch (\`git checkout -b feature/AmazingFeature\`)
