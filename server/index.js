@@ -29,11 +29,13 @@ import authRoutes from './routes/authRoutes.js';
 import policyRoutes from './routes/policyRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/policies', policyRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Dashboard Stats (Simple enough to keep here or move to a dashboardRoutes.js)
 // Let's keep it here for now as "Misc" or moved to applicationRoutes if it's app related.

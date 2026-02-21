@@ -9,7 +9,7 @@ const ChatWidget = () => {
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
 
     const toggleChat = () => setIsOpen(!isOpen);
 
@@ -44,71 +44,58 @@ const ChatWidget = () => {
         setInputText('');
         setIsTyping(true);
 
-        // Simulate varying typing delays
-        setTimeout(async () => {
-            const botResponse = await generateResponse(userMessage.text);
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: botResponse,
-                sender: 'bot'
-            }]);
-            setIsTyping(false);
-        }, 1500);
+        // Call Gemini via backend
+        generateResponse(inputText, [...messages, userMessage]);
     };
 
-    const generateResponse = async (text) => {
-        // 1. Check if user provided API Key
-        const apiKey = import.meta.env.VITE_BACKBOARD_API_KEY;
-        if (!apiKey || apiKey.includes('PASTE_YOUR')) {
-            return getLocalResponse(text); // Fallback to local logic if no key
-        }
-
+    const generateResponse = async (text, fullHistory) => {
         try {
-            // 2. Call Backboard API via Proxy (to avoid CORS)
-            const response = await fetch('/api/backboard/chat/completions', {
+            // Call the backend /api/chat endpoint (proxied by Vite in dev)
+            const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    // Try without 'model' (some APIs auto-select) or standard 'gpt-3.5-turbo'
-                    model: "gpt-3.5-turbo",
-                    messages: [
-                        // Simplify to just user message for maximum compatibility
-                        { role: "user", content: `You are a helpful assistant for PolicySetu. Answer concisely: ${text}` }
-                    ]
-                })
+                    message: text,
+                    conversationHistory: fullHistory.filter(m => m.id !== 1), // exclude welcome msg
+                    language: language,
+                }),
             });
 
             if (!response.ok) {
-                // Fail silently to local response so the user doesn't see scary errors during demo
-                console.warn(`API Error ${response.status}: Falling back to local mode.`);
-                return getLocalResponse(text);
+                console.warn(`Chat API Error ${response.status}: Falling back to local mode.`);
+                const fallback = getLocalResponse(text);
+                addBotMessage(fallback);
+                return;
             }
 
             const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-
-            return data.choices[0].message.content;
-
+            addBotMessage(data.reply);
         } catch (error) {
-            console.error("Backboard API Error (Silent Fail):", error);
-            // Return local response without error message for clean UI
-            return getLocalResponse(text);
+            console.error('Chat API Error (Silent Fail):', error);
+            // Fallback to local responses when backend is unavailable
+            addBotMessage(getLocalResponse(text));
         }
+    };
+
+    const addBotMessage = (text) => {
+        setMessages(prev => [...prev, {
+            id: Date.now() + 1,
+            text: text,
+            sender: 'bot'
+        }]);
+        setIsTyping(false);
     };
 
     const getLocalResponse = (text) => {
         const lowerText = text.toLowerCase();
 
         // Greetings
-        if (lowerText.match(/\b(hi|hello|hey|morning|evening|greetings)\b/)) {
+        if (lowerText.match(/\b(hi|hello|hey|morning|evening|greetings|namaste|sat sri akal)\b/)) {
             return "Hello! 👋 I'm your PolicySetu assistant. I can help you with applying for schemes, checking status, or technical issues. How can I assist you today?";
         }
 
         // Gratitude
-        if (lowerText.match(/\b(thanks|thank|thx)\b/)) {
+        if (lowerText.match(/\b(thanks|thank|thx|dhanyavaad|shukriya)\b/)) {
             return "You're welcome! 😊 Let me know if you need anything else.";
         }
 
@@ -132,7 +119,7 @@ const ChatWidget = () => {
 
         // Documents
         if (lowerText.match(/\b(document|upload|proof|aadhaar|pan)\b/)) {
-            return "Commonly required documents include Aadhaar Card, Income Certificate, and Residence Proof. accepted formats are PDF and JPEG (Max 5MB).";
+            return "Commonly required documents include Aadhaar Card, Income Certificate, and Residence Proof. Accepted formats are PDF and JPEG (Max 5MB).";
         }
 
         // Eligibility
@@ -159,6 +146,34 @@ const ChatWidget = () => {
         return "I'm not sure about that yet. 🤔 Try asking me about: \n• How to apply \n• Tracking application status \n• Required documents \n• Login issues";
     };
 
+    // ─── Render markdown-like formatting from Gemini responses ───
+    const formatBotMessage = (text) => {
+        if (!text) return text;
+
+        // Split by newlines and process each line
+        const lines = text.split('\n');
+        return lines.map((line, i) => {
+            // Bold: **text**
+            const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Bullet points
+            if (line.trim().startsWith('- ') || line.trim().startsWith('• ') || line.trim().match(/^\d+\./)) {
+                return (
+                    <div key={i} className="ml-2 my-0.5" dangerouslySetInnerHTML={{ __html: formattedLine }} />
+                );
+            }
+
+            // Empty lines as spacing
+            if (line.trim() === '') {
+                return <div key={i} className="h-1" />;
+            }
+
+            return (
+                <div key={i} dangerouslySetInnerHTML={{ __html: formattedLine }} />
+            );
+        });
+    };
+
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
             <AnimatePresence>
@@ -180,7 +195,7 @@ const ChatWidget = () => {
                                     <h3 className="font-bold text-sm">{t('chat_title')}</h3>
                                     <p className="text-xs text-primary-100 flex items-center">
                                         <span className="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
-                                        Online
+                                        AI Powered
                                     </p>
                                 </div>
                             </div>
@@ -202,7 +217,7 @@ const ChatWidget = () => {
                                             : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-100 dark:border-slate-700 rounded-bl-none'
                                             }`}
                                     >
-                                        {msg.text}
+                                        {msg.sender === 'bot' ? formatBotMessage(msg.text) : msg.text}
                                     </div>
                                 </div>
                             ))}
