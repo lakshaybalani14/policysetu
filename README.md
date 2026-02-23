@@ -14,7 +14,7 @@ The **Digital Governance Platform** is designed to streamline the process of fin
 -   **📝 Easy Application**: Streamlined forms for quick policy application.
 -   **📊 Real-time Tracking**: Users can track the status of their applications live.
 -   **🛡️ Admin Dashboard**: Comprehensive tools for officials to approve/reject applications and view analytics.
--   **🔐 Secure Authentication**: JWT-based authentication for both users and admins.
+-   **🔐 Secure Authentication**: JWT based authentication for both users and admins.
 -   **📱 Responsive Design**: Fully optimized for mobile and desktop devices.
 
 ## 📸 Screenshots
