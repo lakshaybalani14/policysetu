@@ -1,6 +1,6 @@
 # 🏛️ Digital Governance Platform (PolicySetu)
 
-> A modern, full-stack solution for bridging the gap between government schemes and citizens.
+> A modern, full-stack solution for bridging the gap between government schemes and citizens
 
 ![Project Banner](screenshots/homepage.png)
 
