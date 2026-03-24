@@ -1,0 +1,31 @@
+{
+  "name": "policy_tracker",
+  "version": "1.0.0",
+  "description": "> A modern, full-stack solution for bridging the gap between government schemes and citizens",
+  "main": "package.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "iceberg-js": "^0.8.1",
+    "nodemailer": "^8.0.3",
+    "tslib": "^2.8.1",
+    "undici-types": "^7.16.0",
+    "ws": "^8.19.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lakshaybalani14/policysetu.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lakshaybalani14/policysetu/issues"
+  },
+  "homepage": "https://github.com/lakshaybalani14/policysetu#readme"
+}
