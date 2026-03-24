@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 // In-memory OTP store
 const otpStore = new Map();
@@ -6,7 +6,7 @@ const OTP_EXPIRY_MS = 5 * 60 * 1000;
 
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// Brand colors for email templates
+// Brand colors
 const brand = {
     primary: '#0c8ce9', primaryDark: '#006ec7', orange: '#f97316',
     green: '#16a34a', dark: '#0f172a', gray: '#64748b',
@@ -116,6 +116,17 @@ const templates = {
     }
 };
 
+// Create Gmail transporter
+const createTransporter = () => {
+    return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD,
+        },
+    });
+};
+
 export default async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -124,12 +135,20 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const FROM_EMAIL = process.env.FROM_EMAIL || 'PolicySetu <onboarding@resend.dev>';
-
-    // Route based on the action in the URL: /api/email?action=send-otp
+    const transporter = createTransporter();
+    const FROM_EMAIL = `PolicySetu <${process.env.GMAIL_USER}>`;
     const { action } = req.query;
     const body = req.body;
+
+    const sendMail = async (to, tmpl) => {
+        try {
+            await transporter.sendMail({ from: FROM_EMAIL, to, ...tmpl });
+            return { success: true };
+        } catch (err) {
+            console.error('[Email]', err.message);
+            return { success: false, error: err.message };
+        }
+    };
 
     try {
         switch (action) {
@@ -137,10 +156,9 @@ export default async function handler(req, res) {
                 if (!body.email) return res.status(400).json({ message: 'Email is required' });
                 const otp = generateOtp();
                 otpStore.set(body.email.toLowerCase(), { otp, expiresAt: Date.now() + OTP_EXPIRY_MS, attempts: 0 });
-                const tmpl = templates.otp(otp);
-                const { error } = await resend.emails.send({ from: FROM_EMAIL, to: [body.email], ...tmpl });
-                if (error) return res.status(500).json({ success: false, message: 'Failed to send OTP', error });
-                return res.json({ success: true, message: 'OTP sent successfully' });
+                const result = await sendMail(body.email, templates.otp(otp));
+                if (result.success) return res.json({ success: true, message: 'OTP sent successfully' });
+                return res.status(500).json({ success: false, message: 'Failed to send OTP', error: result.error });
             }
 
             case 'verify-otp': {
@@ -157,49 +175,43 @@ export default async function handler(req, res) {
 
             case 'welcome': {
                 if (!body.name || !body.email) return res.status(400).json({ message: 'Name and email required' });
-                const tmpl = templates.welcome(body.name);
-                const { error } = await resend.emails.send({ from: FROM_EMAIL, to: [body.email], ...tmpl });
-                return res.json({ success: !error });
+                const result = await sendMail(body.email, templates.welcome(body.name));
+                return res.json({ success: result.success });
             }
 
             case 'application-submitted': {
                 const { name, email, policyName, applicationId } = body;
                 if (!name || !email || !policyName) return res.status(400).json({ message: 'Missing fields' });
-                const tmpl = templates.applicationSubmitted(name, policyName, applicationId);
-                const { error } = await resend.emails.send({ from: FROM_EMAIL, to: [email], ...tmpl });
-                return res.json({ success: !error });
+                const result = await sendMail(email, templates.applicationSubmitted(name, policyName, applicationId));
+                return res.json({ success: result.success });
             }
 
             case 'application-status': {
                 const { name, email, policyName, status, remarks } = body;
                 if (!name || !email || !policyName || !status) return res.status(400).json({ message: 'Missing fields' });
-                const tmpl = templates.applicationStatus(name, policyName, status, remarks);
-                const { error } = await resend.emails.send({ from: FROM_EMAIL, to: [email], ...tmpl });
-                return res.json({ success: !error });
+                const result = await sendMail(email, templates.applicationStatus(name, policyName, status, remarks));
+                return res.json({ success: result.success });
             }
 
             case 'payment': {
                 const { name, email, policyName, amount } = body;
                 if (!name || !email || !policyName || !amount) return res.status(400).json({ message: 'Missing fields' });
-                const tmpl = templates.payment(name, policyName, amount);
-                const { error } = await resend.emails.send({ from: FROM_EMAIL, to: [email], ...tmpl });
-                return res.json({ success: !error });
+                const result = await sendMail(email, templates.payment(name, policyName, amount));
+                return res.json({ success: result.success });
             }
 
             case 'ticket-created': {
                 const { name, email, subject, ticketId } = body;
                 if (!name || !email || !subject) return res.status(400).json({ message: 'Missing fields' });
-                const tmpl = templates.ticketCreated(name, subject, ticketId);
-                const { error } = await resend.emails.send({ from: FROM_EMAIL, to: [email], ...tmpl });
-                return res.json({ success: !error });
+                const result = await sendMail(email, templates.ticketCreated(name, subject, ticketId));
+                return res.json({ success: result.success });
             }
 
             case 'ticket-status': {
                 const { name, email, subject, status } = body;
                 if (!name || !email || !subject || !status) return res.status(400).json({ message: 'Missing fields' });
-                const tmpl = templates.ticketStatus(name, subject, status);
-                const { error } = await resend.emails.send({ from: FROM_EMAIL, to: [email], ...tmpl });
-                return res.json({ success: !error });
+                const result = await sendMail(email, templates.ticketStatus(name, subject, status));
+                return res.json({ success: result.success });
             }
 
             default:

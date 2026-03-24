@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import {
     otpTemplate,
@@ -12,28 +12,31 @@ import {
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.FROM_EMAIL || 'PolicySetu <onboarding@resend.dev>';
+// Gmail SMTP transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+    },
+});
+
+const FROM_EMAIL = `PolicySetu <${process.env.GMAIL_USER}>`;
 
 // Helper: send email with error handling
 const sendEmail = async (to, subject, html) => {
     try {
-        const { data, error } = await resend.emails.send({
+        const info = await transporter.sendMail({
             from: FROM_EMAIL,
-            to: [to],
+            to,
             subject,
             html,
         });
 
-        if (error) {
-            console.error('[Email] Send error:', error);
-            return { success: false, error };
-        }
-
-        console.log(`[Email] Sent to ${to}: "${subject}" (id: ${data.id})`);
-        return { success: true, data };
+        console.log(`[Email] Sent to ${to}: "${subject}" (id: ${info.messageId})`);
+        return { success: true, data: info };
     } catch (err) {
-        console.error('[Email] Unexpected error:', err);
+        console.error('[Email] Send error:', err.message);
         return { success: false, error: err.message };
     }
 };
