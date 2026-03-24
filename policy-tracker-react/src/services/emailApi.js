@@ -1,118 +1,42 @@
-// Frontend helper to call the Express server email API
-// The server runs on port 5000 (or env-configured)
+// Frontend helper to call email API
+// In production (Vercel): calls /api/email?action=xxx (serverless function)
+// In development: calls http://localhost:5000/api/email/xxx (Express server)
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const isDev = import.meta.env.DEV;
+const EXPRESS_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+const callEmailApi = async (action, body) => {
+    try {
+        const url = isDev
+            ? `${EXPRESS_URL}/api/email/${action}`
+            : `/api/email?action=${action}`;
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        return res.json();
+    } catch (err) {
+        console.error(`[EmailApi] ${action} error:`, err);
+        return { success: false };
+    }
+};
 
 const emailApi = {
-    // Send OTP to email
-    sendOtp: async (email) => {
-        const res = await fetch(`${API_BASE}/api/email/send-otp`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
-        });
-        return res.json();
-    },
-
-    // Verify OTP
-    verifyOtp: async (email, otp) => {
-        const res = await fetch(`${API_BASE}/api/email/verify-otp`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, otp }),
-        });
-        return res.json();
-    },
-
-    // Send welcome email
-    sendWelcome: async (name, email) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/email/welcome`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email }),
-            });
-            return res.json();
-        } catch (err) {
-            console.error('[EmailApi] welcome error:', err);
-            return { success: false };
-        }
-    },
-
-    // Send application submitted email
-    sendApplicationSubmitted: async (name, email, policyName, applicationId) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/email/application-submitted`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, policyName, applicationId }),
-            });
-            return res.json();
-        } catch (err) {
-            console.error('[EmailApi] application-submitted error:', err);
-            return { success: false };
-        }
-    },
-
-    // Send application status email
-    sendApplicationStatus: async (name, email, policyName, status, remarks) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/email/application-status`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, policyName, status, remarks }),
-            });
-            return res.json();
-        } catch (err) {
-            console.error('[EmailApi] application-status error:', err);
-            return { success: false };
-        }
-    },
-
-    // Send payment email
-    sendPayment: async (name, email, policyName, amount) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/email/payment`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, policyName, amount }),
-            });
-            return res.json();
-        } catch (err) {
-            console.error('[EmailApi] payment error:', err);
-            return { success: false };
-        }
-    },
-
-    // Send ticket created email
-    sendTicketCreated: async (name, email, subject, ticketId) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/email/ticket-created`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, subject, ticketId }),
-            });
-            return res.json();
-        } catch (err) {
-            console.error('[EmailApi] ticket-created error:', err);
-            return { success: false };
-        }
-    },
-
-    // Send ticket status email
-    sendTicketStatus: async (name, email, subject, status) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/email/ticket-status`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, subject, status }),
-            });
-            return res.json();
-        } catch (err) {
-            console.error('[EmailApi] ticket-status error:', err);
-            return { success: false };
-        }
-    },
+    sendOtp: (email) => callEmailApi('send-otp', { email }),
+    verifyOtp: (email, otp) => callEmailApi('verify-otp', { email, otp }),
+    sendWelcome: (name, email) => callEmailApi('welcome', { name, email }),
+    sendApplicationSubmitted: (name, email, policyName, applicationId) =>
+        callEmailApi('application-submitted', { name, email, policyName, applicationId }),
+    sendApplicationStatus: (name, email, policyName, status, remarks) =>
+        callEmailApi('application-status', { name, email, policyName, status, remarks }),
+    sendPayment: (name, email, policyName, amount) =>
+        callEmailApi('payment', { name, email, policyName, amount }),
+    sendTicketCreated: (name, email, subject, ticketId) =>
+        callEmailApi('ticket-created', { name, email, subject, ticketId }),
+    sendTicketStatus: (name, email, subject, status) =>
+        callEmailApi('ticket-status', { name, email, subject, status }),
 };
 
 export default emailApi;
