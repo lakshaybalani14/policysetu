@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // In-memory OTP store
 const otpStore = new Map();
@@ -13,10 +13,9 @@ const brand = {
     lightBg: '#f8fafc', white: '#ffffff',
 };
 
-const baseLayout = (content, preheader) => `
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PolicySetu</title></head>
+const baseLayout = (content, preheader) => `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PolicySetu</title></head>
 <body style="margin:0;padding:0;background-color:${brand.lightBg};font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-${preheader ? '<div style="display:none;max-height:0;overflow:hidden;">' + preheader + '</div>' : ''}
+${preheader ? `<div style="display:none;max-height:0;overflow:hidden;">${preheader}</div>` : ''}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${brand.lightBg};">
 <tr><td align="center" style="padding:32px 16px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
@@ -31,47 +30,40 @@ ${preheader ? '<div style="display:none;max-height:0;overflow:hidden;">' + prehe
 <p style="margin:0;font-size:11px;color:#94a3b8;">This is an automated email. Please do not reply directly.</p>
 </td></tr></table></td></tr></table></body></html>`;
 
-// Email templates
 const templates = {
     otp: (otp) => ({
-        subject: otp + ' — Your PolicySetu Verification Code',
-        html: baseLayout('<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Verify Your Email</h2><p style="margin:0 0 24px;color:' + brand.gray + ';font-size:15px;">Use the code below to complete your registration</p><div style="background:' + brand.lightBg + ';border:2px dashed ' + brand.primary + ';border-radius:12px;padding:20px;margin:0 auto 24px;max-width:280px;"><span style="font-size:36px;font-weight:800;letter-spacing:8px;color:' + brand.primary + ';">' + otp + '</span></div><p style="margin:0;font-size:13px;color:' + brand.gray + ';">This code expires in <strong>5 minutes</strong>.</p></div>', 'Your OTP code is ' + otp)
+        subject: `${otp} — Your PolicySetu Verification Code`,
+        html: baseLayout(`<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Verify Your Email</h2><p style="margin:0 0 24px;color:${brand.gray};font-size:15px;">Use the code below to complete your registration</p><div style="background:${brand.lightBg};border:2px dashed ${brand.primary};border-radius:12px;padding:20px;margin:0 auto 24px;max-width:280px;"><span style="font-size:36px;font-weight:800;letter-spacing:8px;color:${brand.primary};">${otp}</span></div><p style="margin:0;font-size:13px;color:${brand.gray};">This code expires in <strong>5 minutes</strong>.</p></div>`, `Your OTP code is ${otp}`)
     }),
     welcome: (name) => ({
-        subject: 'Welcome to PolicySetu, ' + name + '!',
-        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:16px;">🎉</div><h2 style="margin:0 0 8px;font-size:26px;color:' + brand.dark + ';">Welcome, ' + name + '!</h2><p style="margin:0 0 28px;color:' + brand.gray + ';font-size:15px;line-height:1.6;">Your account has been created. You now have access to hundreds of government welfare schemes.</p></div>', 'Welcome to PolicySetu!')
+        subject: `Welcome to PolicySetu, ${name}!`,
+        html: baseLayout(`<div style="text-align:center;"><div style="font-size:48px;margin-bottom:16px;">🎉</div><h2 style="margin:0 0 8px;font-size:26px;color:${brand.dark};">Welcome, ${name}!</h2><p style="margin:0 0 28px;color:${brand.gray};font-size:15px;line-height:1.6;">Your account has been created. You now have access to hundreds of government welfare schemes.</p></div>`, `Welcome to PolicySetu!`)
     }),
     applicationSubmitted: (name, policyName, appId) => ({
-        subject: 'Application Submitted — ' + policyName,
-        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">✅</div><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Application Submitted!</h2><p style="margin:0 0 24px;color:' + brand.gray + ';">Hi ' + name + ', your application for <strong>' + policyName + '</strong> (ID: #' + appId + ') has been received.</p></div>')
+        subject: `Application Submitted — ${policyName}`,
+        html: baseLayout(`<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">✅</div><h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Application Submitted!</h2><p style="margin:0 0 24px;color:${brand.gray};">Hi ${name}, your application for <strong>${policyName}</strong> (ID: #${appId}) has been received.</p></div>`)
     }),
     applicationStatus: (name, policyName, status, remarks) => {
         const labels = { 'approved': 'Approved', 'rejected': 'Rejected', 'under-review': 'Under Review' };
         const label = labels[status] || status;
-        return {
-            subject: 'Application ' + label + ' — ' + policyName,
-            html: baseLayout('<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Application ' + label + '</h2><p style="margin:0 0 16px;color:' + brand.gray + ';">Hi ' + name + ', your application for <strong>' + policyName + '</strong> has been marked as <strong>' + label + '</strong>.</p>' + (remarks ? '<p style="color:' + brand.gray + ';">Remarks: ' + remarks + '</p>' : '') + '</div>')
-        };
+        return { subject: `Application ${label} — ${policyName}`, html: baseLayout(`<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Application ${label}</h2><p style="margin:0 0 16px;color:${brand.gray};">Hi ${name}, your application for <strong>${policyName}</strong> has been marked as <strong>${label}</strong>.</p>${remarks ? `<p style="color:${brand.gray};">Remarks: ${remarks}</p>` : ''}</div>`) };
     },
     payment: (name, policyName, amount) => ({
-        subject: 'Payment Processed — ' + policyName,
-        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">💰</div><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Payment Processed!</h2><p style="margin:0 0 24px;color:' + brand.gray + ';">Hi ' + name + ', your benefit of <strong>₹' + amount + '</strong> for <strong>' + policyName + '</strong> has been processed.</p></div>')
+        subject: `Payment Processed — ${policyName}`,
+        html: baseLayout(`<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">💰</div><h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Payment Processed!</h2><p style="margin:0 0 24px;color:${brand.gray};">Hi ${name}, your benefit of <strong>₹${amount}</strong> for <strong>${policyName}</strong> has been processed.</p></div>`)
     }),
     ticketCreated: (name, subject, ticketId) => ({
-        subject: 'Support Ticket #' + ticketId + ' Created',
-        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">🎫</div><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Ticket Created</h2><p style="color:' + brand.gray + ';">Hi ' + name + ', your ticket "' + subject + '" (ID: #' + ticketId + ') has been received.</p></div>')
+        subject: `Support Ticket #${ticketId} Created`,
+        html: baseLayout(`<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">🎫</div><h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Ticket Created</h2><p style="color:${brand.gray};">Hi ${name}, your ticket "${subject}" (ID: #${ticketId}) has been received.</p></div>`)
     }),
     ticketStatus: (name, subject, status) => {
         const labels = { 'resolved': 'Resolved', 'closed': 'Closed', 'in-progress': 'In Progress' };
         const label = labels[status] || status;
-        return {
-            subject: 'Ticket ' + label + ' — ' + subject,
-            html: baseLayout('<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Ticket ' + label + '</h2><p style="color:' + brand.gray + ';">Hi ' + name + ', your ticket "' + subject + '" has been marked as <strong>' + label + '</strong>.</p></div>')
-        };
+        return { subject: `Ticket ${label} — ${subject}`, html: baseLayout(`<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Ticket ${label}</h2><p style="color:${brand.gray};">Hi ${name}, your ticket "${subject}" has been marked as <strong>${label}</strong>.</p></div>`) };
     }
 };
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -81,25 +73,26 @@ module.exports = async function handler(req, res) {
 
     // Check env vars
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-        console.error('[Email] Missing GMAIL_USER or GMAIL_APP_PASSWORD env vars');
-        return res.status(500).json({ success: false, message: 'Email service not configured. Add GMAIL_USER and GMAIL_APP_PASSWORD to Vercel env vars.' });
+        return res.status(500).json({ success: false, message: 'Email not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD in Vercel env vars.' });
     }
 
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_APP_PASSWORD,
-        },
-    });
+    let transporter;
+    try {
+        transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: 'Failed to create email transporter: ' + err.message });
+    }
 
-    const FROM_EMAIL = 'PolicySetu <' + process.env.GMAIL_USER + '>';
-    const action = req.query.action;
+    const FROM_EMAIL = `PolicySetu <${process.env.GMAIL_USER}>`;
+    const { action } = req.query;
     const body = req.body;
 
     const sendMail = async (to, tmpl) => {
         try {
-            await transporter.sendMail({ from: FROM_EMAIL, to: to, subject: tmpl.subject, html: tmpl.html });
+            await transporter.sendMail({ from: FROM_EMAIL, to, subject: tmpl.subject, html: tmpl.html });
             return { success: true };
         } catch (err) {
             console.error('[Email] Send failed:', err.message);
@@ -112,7 +105,7 @@ module.exports = async function handler(req, res) {
             case 'send-otp': {
                 if (!body.email) return res.status(400).json({ message: 'Email is required' });
                 const otp = generateOtp();
-                otpStore.set(body.email.toLowerCase(), { otp: otp, expiresAt: Date.now() + OTP_EXPIRY_MS, attempts: 0 });
+                otpStore.set(body.email.toLowerCase(), { otp, expiresAt: Date.now() + OTP_EXPIRY_MS, attempts: 0 });
                 const result = await sendMail(body.email, templates.otp(otp));
                 if (result.success) return res.json({ success: true, message: 'OTP sent successfully' });
                 return res.status(500).json({ success: false, message: 'Failed to send OTP: ' + (result.error || 'Unknown error') });
@@ -120,8 +113,8 @@ module.exports = async function handler(req, res) {
 
             case 'verify-otp': {
                 if (!body.email || !body.otp) return res.status(400).json({ message: 'Email and OTP are required' });
-                var email = body.email.toLowerCase();
-                var entry = otpStore.get(email);
+                const email = body.email.toLowerCase();
+                const entry = otpStore.get(email);
                 if (!entry) return res.status(400).json({ success: false, message: 'OTP expired or not found. Please request a new one.' });
                 if (Date.now() > entry.expiresAt) { otpStore.delete(email); return res.status(400).json({ success: false, message: 'OTP has expired.' }); }
                 entry.attempts += 1;
@@ -132,38 +125,43 @@ module.exports = async function handler(req, res) {
 
             case 'welcome': {
                 if (!body.name || !body.email) return res.status(400).json({ message: 'Name and email required' });
-                var r = await sendMail(body.email, templates.welcome(body.name));
+                const r = await sendMail(body.email, templates.welcome(body.name));
                 return res.json({ success: r.success });
             }
 
             case 'application-submitted': {
-                if (!body.name || !body.email || !body.policyName) return res.status(400).json({ message: 'Missing fields' });
-                var r2 = await sendMail(body.email, templates.applicationSubmitted(body.name, body.policyName, body.applicationId));
-                return res.json({ success: r2.success });
+                const { name, email, policyName, applicationId } = body;
+                if (!name || !email || !policyName) return res.status(400).json({ message: 'Missing fields' });
+                const r = await sendMail(email, templates.applicationSubmitted(name, policyName, applicationId));
+                return res.json({ success: r.success });
             }
 
             case 'application-status': {
-                if (!body.name || !body.email || !body.policyName || !body.status) return res.status(400).json({ message: 'Missing fields' });
-                var r3 = await sendMail(body.email, templates.applicationStatus(body.name, body.policyName, body.status, body.remarks));
-                return res.json({ success: r3.success });
+                const { name, email, policyName, status, remarks } = body;
+                if (!name || !email || !policyName || !status) return res.status(400).json({ message: 'Missing fields' });
+                const r = await sendMail(email, templates.applicationStatus(name, policyName, status, remarks));
+                return res.json({ success: r.success });
             }
 
             case 'payment': {
-                if (!body.name || !body.email || !body.policyName || !body.amount) return res.status(400).json({ message: 'Missing fields' });
-                var r4 = await sendMail(body.email, templates.payment(body.name, body.policyName, body.amount));
-                return res.json({ success: r4.success });
+                const { name, email, policyName, amount } = body;
+                if (!name || !email || !policyName || !amount) return res.status(400).json({ message: 'Missing fields' });
+                const r = await sendMail(email, templates.payment(name, policyName, amount));
+                return res.json({ success: r.success });
             }
 
             case 'ticket-created': {
-                if (!body.name || !body.email || !body.subject) return res.status(400).json({ message: 'Missing fields' });
-                var r5 = await sendMail(body.email, templates.ticketCreated(body.name, body.subject, body.ticketId));
-                return res.json({ success: r5.success });
+                const { name, email, subject, ticketId } = body;
+                if (!name || !email || !subject) return res.status(400).json({ message: 'Missing fields' });
+                const r = await sendMail(email, templates.ticketCreated(name, subject, ticketId));
+                return res.json({ success: r.success });
             }
 
             case 'ticket-status': {
-                if (!body.name || !body.email || !body.subject || !body.status) return res.status(400).json({ message: 'Missing fields' });
-                var r6 = await sendMail(body.email, templates.ticketStatus(body.name, body.subject, body.status));
-                return res.json({ success: r6.success });
+                const { name, email, subject, status } = body;
+                if (!name || !email || !subject || !status) return res.status(400).json({ message: 'Missing fields' });
+                const r = await sendMail(email, templates.ticketStatus(name, subject, status));
+                return res.json({ success: r.success });
             }
 
             default:
@@ -173,4 +171,4 @@ module.exports = async function handler(req, res) {
         console.error('[Email API] Unexpected error:', err);
         return res.status(500).json({ message: 'Server error: ' + err.message });
     }
-};
+}
