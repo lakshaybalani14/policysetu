@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+const nodemailer = require('nodemailer');
 
 // In-memory OTP store
 const otpStore = new Map();
@@ -13,10 +13,10 @@ const brand = {
     lightBg: '#f8fafc', white: '#ffffff',
 };
 
-const baseLayout = (content, preheader = '') => `
+const baseLayout = (content, preheader) => `
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PolicySetu</title></head>
 <body style="margin:0;padding:0;background-color:${brand.lightBg};font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-${preheader ? `<div style="display:none;max-height:0;overflow:hidden;">${preheader}</div>` : ''}
+${preheader ? '<div style="display:none;max-height:0;overflow:hidden;">' + preheader + '</div>' : ''}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${brand.lightBg};">
 <tr><td align="center" style="padding:32px 16px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
@@ -27,107 +27,51 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;">${prehead
 <tr><td style="height:4px;background:linear-gradient(90deg,${brand.orange},${brand.primary},${brand.green});"></td></tr>
 <tr><td style="background-color:${brand.white};padding:40px;border-radius:0 0 16px 16px;">${content}</td></tr>
 <tr><td style="padding:24px 40px;text-align:center;">
-<p style="margin:0 0 8px;font-size:12px;color:${brand.gray};">© ${new Date().getFullYear()} PolicySetu — A Digital India Initiative</p>
+<p style="margin:0 0 8px;font-size:12px;color:${brand.gray};">PolicySetu — A Digital India Initiative</p>
 <p style="margin:0;font-size:11px;color:#94a3b8;">This is an automated email. Please do not reply directly.</p>
 </td></tr></table></td></tr></table></body></html>`;
 
 // Email templates
 const templates = {
     otp: (otp) => ({
-        subject: `${otp} — Your PolicySetu Verification Code`,
-        html: baseLayout(`<div style="text-align:center;">
-            <h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Verify Your Email</h2>
-            <p style="margin:0 0 24px;color:${brand.gray};font-size:15px;">Use the code below to complete your registration</p>
-            <div style="background:${brand.lightBg};border:2px dashed ${brand.primary};border-radius:12px;padding:20px;margin:0 auto 24px;max-width:280px;">
-                <span style="font-size:36px;font-weight:800;letter-spacing:8px;color:${brand.primary};">${otp}</span>
-            </div>
-            <p style="margin:0;font-size:13px;color:${brand.gray};">This code expires in <strong>5 minutes</strong>.</p>
-        </div>`, `Your OTP code is ${otp}`)
+        subject: otp + ' — Your PolicySetu Verification Code',
+        html: baseLayout('<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Verify Your Email</h2><p style="margin:0 0 24px;color:' + brand.gray + ';font-size:15px;">Use the code below to complete your registration</p><div style="background:' + brand.lightBg + ';border:2px dashed ' + brand.primary + ';border-radius:12px;padding:20px;margin:0 auto 24px;max-width:280px;"><span style="font-size:36px;font-weight:800;letter-spacing:8px;color:' + brand.primary + ';">' + otp + '</span></div><p style="margin:0;font-size:13px;color:' + brand.gray + ';">This code expires in <strong>5 minutes</strong>.</p></div>', 'Your OTP code is ' + otp)
     }),
     welcome: (name) => ({
-        subject: `Welcome to PolicySetu, ${name}! 🎉`,
-        html: baseLayout(`<div style="text-align:center;">
-            <div style="font-size:48px;margin-bottom:16px;">🎉</div>
-            <h2 style="margin:0 0 8px;font-size:26px;color:${brand.dark};">Welcome, ${name}!</h2>
-            <p style="margin:0 0 28px;color:${brand.gray};font-size:15px;line-height:1.6;">Your account has been created. You now have access to hundreds of government welfare schemes.</p>
-        </div>`, `Welcome to PolicySetu, ${name}!`)
+        subject: 'Welcome to PolicySetu, ' + name + '!',
+        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:16px;">🎉</div><h2 style="margin:0 0 8px;font-size:26px;color:' + brand.dark + ';">Welcome, ' + name + '!</h2><p style="margin:0 0 28px;color:' + brand.gray + ';font-size:15px;line-height:1.6;">Your account has been created. You now have access to hundreds of government welfare schemes.</p></div>', 'Welcome to PolicySetu!')
     }),
     applicationSubmitted: (name, policyName, appId) => ({
-        subject: `Application Submitted — ${policyName}`,
-        html: baseLayout(`<div style="text-align:center;">
-            <div style="font-size:48px;margin-bottom:8px;">✅</div>
-            <h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Application Submitted!</h2>
-            <p style="margin:0 0 24px;color:${brand.gray};">Hi ${name}, your application for <strong>${policyName}</strong> (ID: #${appId}) has been received.</p>
-            <p style="margin:0;font-size:13px;color:${brand.gray};">You will receive email updates as your application progresses.</p>
-        </div>`, `Application submitted for ${policyName}`)
+        subject: 'Application Submitted — ' + policyName,
+        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">✅</div><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Application Submitted!</h2><p style="margin:0 0 24px;color:' + brand.gray + ';">Hi ' + name + ', your application for <strong>' + policyName + '</strong> (ID: #' + appId + ') has been received.</p></div>')
     }),
     applicationStatus: (name, policyName, status, remarks) => {
-        const cfg = {
-            'approved': { emoji: '🎉', label: 'Approved', color: '#16a34a', bg: '#dcfce7' },
-            'rejected': { emoji: '❌', label: 'Rejected', color: '#dc2626', bg: '#fee2e2' },
-            'under-review': { emoji: '🔍', label: 'Under Review', color: '#f59e0b', bg: '#fef3c7' }
-        }[status] || { emoji: '📋', label: status, color: brand.primary, bg: '#dbeafe' };
+        const labels = { 'approved': 'Approved', 'rejected': 'Rejected', 'under-review': 'Under Review' };
+        const label = labels[status] || status;
         return {
-            subject: `Application ${cfg.label} — ${policyName}`,
-            html: baseLayout(`<div style="text-align:center;">
-                <div style="font-size:48px;margin-bottom:8px;">${cfg.emoji}</div>
-                <h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Application ${cfg.label}</h2>
-                <p style="margin:0 0 16px;color:${brand.gray};">Hi ${name}, your application for <strong>${policyName}</strong> has been updated.</p>
-                <span style="background:${cfg.bg};color:${cfg.color};font-size:14px;font-weight:700;padding:6px 16px;border-radius:8px;">${cfg.label}</span>
-                ${remarks ? `<p style="margin:16px 0 0;color:${brand.gray};font-size:14px;">Remarks: ${remarks}</p>` : ''}
-                ${status === 'approved' ? `<p style="margin:16px 0 0;color:${brand.green};font-weight:600;">💰 Benefits will be disbursed shortly.</p>` : ''}
-            </div>`)
+            subject: 'Application ' + label + ' — ' + policyName,
+            html: baseLayout('<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Application ' + label + '</h2><p style="margin:0 0 16px;color:' + brand.gray + ';">Hi ' + name + ', your application for <strong>' + policyName + '</strong> has been marked as <strong>' + label + '</strong>.</p>' + (remarks ? '<p style="color:' + brand.gray + ';">Remarks: ' + remarks + '</p>' : '') + '</div>')
         };
     },
     payment: (name, policyName, amount) => ({
-        subject: `Payment Processed — ₹${amount} for ${policyName}`,
-        html: baseLayout(`<div style="text-align:center;">
-            <div style="font-size:48px;margin-bottom:8px;">💰</div>
-            <h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Payment Processed!</h2>
-            <p style="margin:0 0 24px;color:${brand.gray};">Hi ${name}, your benefit for <strong>${policyName}</strong> has been processed.</p>
-            <div style="background:linear-gradient(135deg,${brand.green},#15803d);border-radius:12px;padding:24px;margin-bottom:24px;">
-                <p style="margin:0;font-size:14px;color:rgba(255,255,255,0.8);">Amount Disbursed</p>
-                <p style="margin:4px 0 0;font-size:36px;font-weight:800;color:${brand.white};">₹${typeof amount === 'number' ? amount.toLocaleString('en-IN') : amount}</p>
-            </div>
-        </div>`)
+        subject: 'Payment Processed — ' + policyName,
+        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">💰</div><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Payment Processed!</h2><p style="margin:0 0 24px;color:' + brand.gray + ';">Hi ' + name + ', your benefit of <strong>₹' + amount + '</strong> for <strong>' + policyName + '</strong> has been processed.</p></div>')
     }),
     ticketCreated: (name, subject, ticketId) => ({
-        subject: `Support Ticket #${ticketId} Created`,
-        html: baseLayout(`<div style="text-align:center;">
-            <div style="font-size:48px;margin-bottom:8px;">🎫</div>
-            <h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Ticket Created</h2>
-            <p style="margin:0 0 16px;color:${brand.gray};">Hi ${name}, your support ticket "<strong>${subject}</strong>" (ID: #${ticketId}) has been received.</p>
-            <p style="margin:0;font-size:13px;color:${brand.gray};">Our team will respond within 24-48 hours.</p>
-        </div>`)
+        subject: 'Support Ticket #' + ticketId + ' Created',
+        html: baseLayout('<div style="text-align:center;"><div style="font-size:48px;margin-bottom:8px;">🎫</div><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Ticket Created</h2><p style="color:' + brand.gray + ';">Hi ' + name + ', your ticket "' + subject + '" (ID: #' + ticketId + ') has been received.</p></div>')
     }),
     ticketStatus: (name, subject, status) => {
-        const cfg = {
-            'resolved': { emoji: '✅', label: 'Resolved' }, 'closed': { emoji: '🔒', label: 'Closed' },
-            'in-progress': { emoji: '⚙️', label: 'In Progress' }
-        }[status] || { emoji: '📋', label: status };
+        const labels = { 'resolved': 'Resolved', 'closed': 'Closed', 'in-progress': 'In Progress' };
+        const label = labels[status] || status;
         return {
-            subject: `Ticket ${cfg.label} — ${subject}`,
-            html: baseLayout(`<div style="text-align:center;">
-                <div style="font-size:48px;margin-bottom:8px;">${cfg.emoji}</div>
-                <h2 style="margin:0 0 8px;font-size:24px;color:${brand.dark};">Ticket ${cfg.label}</h2>
-                <p style="margin:0;color:${brand.gray};">Hi ${name}, your ticket "<strong>${subject}</strong>" has been marked as <strong>${cfg.label}</strong>.</p>
-            </div>`)
+            subject: 'Ticket ' + label + ' — ' + subject,
+            html: baseLayout('<div style="text-align:center;"><h2 style="margin:0 0 8px;font-size:24px;color:' + brand.dark + ';">Ticket ' + label + '</h2><p style="color:' + brand.gray + ';">Hi ' + name + ', your ticket "' + subject + '" has been marked as <strong>' + label + '</strong>.</p></div>')
         };
     }
 };
 
-// Create Gmail transporter
-const createTransporter = () => {
-    return nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_APP_PASSWORD,
-        },
-    });
-};
-
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -135,17 +79,30 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
 
-    const transporter = createTransporter();
-    const FROM_EMAIL = `PolicySetu <${process.env.GMAIL_USER}>`;
-    const { action } = req.query;
+    // Check env vars
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+        console.error('[Email] Missing GMAIL_USER or GMAIL_APP_PASSWORD env vars');
+        return res.status(500).json({ success: false, message: 'Email service not configured. Add GMAIL_USER and GMAIL_APP_PASSWORD to Vercel env vars.' });
+    }
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD,
+        },
+    });
+
+    const FROM_EMAIL = 'PolicySetu <' + process.env.GMAIL_USER + '>';
+    const action = req.query.action;
     const body = req.body;
 
     const sendMail = async (to, tmpl) => {
         try {
-            await transporter.sendMail({ from: FROM_EMAIL, to, ...tmpl });
+            await transporter.sendMail({ from: FROM_EMAIL, to: to, subject: tmpl.subject, html: tmpl.html });
             return { success: true };
         } catch (err) {
-            console.error('[Email]', err.message);
+            console.error('[Email] Send failed:', err.message);
             return { success: false, error: err.message };
         }
     };
@@ -155,16 +112,16 @@ export default async function handler(req, res) {
             case 'send-otp': {
                 if (!body.email) return res.status(400).json({ message: 'Email is required' });
                 const otp = generateOtp();
-                otpStore.set(body.email.toLowerCase(), { otp, expiresAt: Date.now() + OTP_EXPIRY_MS, attempts: 0 });
+                otpStore.set(body.email.toLowerCase(), { otp: otp, expiresAt: Date.now() + OTP_EXPIRY_MS, attempts: 0 });
                 const result = await sendMail(body.email, templates.otp(otp));
                 if (result.success) return res.json({ success: true, message: 'OTP sent successfully' });
-                return res.status(500).json({ success: false, message: 'Failed to send OTP', error: result.error });
+                return res.status(500).json({ success: false, message: 'Failed to send OTP: ' + (result.error || 'Unknown error') });
             }
 
             case 'verify-otp': {
                 if (!body.email || !body.otp) return res.status(400).json({ message: 'Email and OTP are required' });
-                const email = body.email.toLowerCase();
-                const entry = otpStore.get(email);
+                var email = body.email.toLowerCase();
+                var entry = otpStore.get(email);
                 if (!entry) return res.status(400).json({ success: false, message: 'OTP expired or not found. Please request a new one.' });
                 if (Date.now() > entry.expiresAt) { otpStore.delete(email); return res.status(400).json({ success: false, message: 'OTP has expired.' }); }
                 entry.attempts += 1;
@@ -175,50 +132,45 @@ export default async function handler(req, res) {
 
             case 'welcome': {
                 if (!body.name || !body.email) return res.status(400).json({ message: 'Name and email required' });
-                const result = await sendMail(body.email, templates.welcome(body.name));
-                return res.json({ success: result.success });
+                var r = await sendMail(body.email, templates.welcome(body.name));
+                return res.json({ success: r.success });
             }
 
             case 'application-submitted': {
-                const { name, email, policyName, applicationId } = body;
-                if (!name || !email || !policyName) return res.status(400).json({ message: 'Missing fields' });
-                const result = await sendMail(email, templates.applicationSubmitted(name, policyName, applicationId));
-                return res.json({ success: result.success });
+                if (!body.name || !body.email || !body.policyName) return res.status(400).json({ message: 'Missing fields' });
+                var r2 = await sendMail(body.email, templates.applicationSubmitted(body.name, body.policyName, body.applicationId));
+                return res.json({ success: r2.success });
             }
 
             case 'application-status': {
-                const { name, email, policyName, status, remarks } = body;
-                if (!name || !email || !policyName || !status) return res.status(400).json({ message: 'Missing fields' });
-                const result = await sendMail(email, templates.applicationStatus(name, policyName, status, remarks));
-                return res.json({ success: result.success });
+                if (!body.name || !body.email || !body.policyName || !body.status) return res.status(400).json({ message: 'Missing fields' });
+                var r3 = await sendMail(body.email, templates.applicationStatus(body.name, body.policyName, body.status, body.remarks));
+                return res.json({ success: r3.success });
             }
 
             case 'payment': {
-                const { name, email, policyName, amount } = body;
-                if (!name || !email || !policyName || !amount) return res.status(400).json({ message: 'Missing fields' });
-                const result = await sendMail(email, templates.payment(name, policyName, amount));
-                return res.json({ success: result.success });
+                if (!body.name || !body.email || !body.policyName || !body.amount) return res.status(400).json({ message: 'Missing fields' });
+                var r4 = await sendMail(body.email, templates.payment(body.name, body.policyName, body.amount));
+                return res.json({ success: r4.success });
             }
 
             case 'ticket-created': {
-                const { name, email, subject, ticketId } = body;
-                if (!name || !email || !subject) return res.status(400).json({ message: 'Missing fields' });
-                const result = await sendMail(email, templates.ticketCreated(name, subject, ticketId));
-                return res.json({ success: result.success });
+                if (!body.name || !body.email || !body.subject) return res.status(400).json({ message: 'Missing fields' });
+                var r5 = await sendMail(body.email, templates.ticketCreated(body.name, body.subject, body.ticketId));
+                return res.json({ success: r5.success });
             }
 
             case 'ticket-status': {
-                const { name, email, subject, status } = body;
-                if (!name || !email || !subject || !status) return res.status(400).json({ message: 'Missing fields' });
-                const result = await sendMail(email, templates.ticketStatus(name, subject, status));
-                return res.json({ success: result.success });
+                if (!body.name || !body.email || !body.subject || !body.status) return res.status(400).json({ message: 'Missing fields' });
+                var r6 = await sendMail(body.email, templates.ticketStatus(body.name, body.subject, body.status));
+                return res.json({ success: r6.success });
             }
 
             default:
-                return res.status(400).json({ message: `Unknown action: ${action}` });
+                return res.status(400).json({ message: 'Unknown action: ' + action });
         }
     } catch (err) {
-        console.error('[Email API] Error:', err);
-        return res.status(500).json({ message: 'Server error', error: err.message });
+        console.error('[Email API] Unexpected error:', err);
+        return res.status(500).json({ message: 'Server error: ' + err.message });
     }
-}
+};
