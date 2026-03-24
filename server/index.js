@@ -30,12 +30,14 @@ import policyRoutes from './routes/policyRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import emailRoutes from './routes/emailRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/policies', policyRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/email', emailRoutes);
 
 // Dashboard Stats (Simple enough to keep here or move to a dashboardRoutes.js)
 // Let's keep it here for now as "Misc" or moved to applicationRoutes if it's app related.

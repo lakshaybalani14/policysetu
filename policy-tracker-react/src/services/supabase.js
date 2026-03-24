@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import emailApi from './emailApi';
 
 const supabaseUrl = 'https://zlbybzbgxsafvrmuunbu.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsYnliemJneHNhZnZybXV1bmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NjM2NTcsImV4cCI6MjA4NjEzOTY1N30.I5zmvGi2DzyI2XyWR_a5cw7MdmLyGQsB6C_Dxh14hbs';
@@ -119,6 +120,17 @@ export const applicationHelpers = {
             }])
             .select()
             .single();
+
+        // Send application submitted email (fire-and-forget)
+        if (data && !error) {
+            const userName = user.user_metadata?.name || user.email;
+            emailApi.sendApplicationSubmitted(
+                userName, user.email,
+                applicationData.policy_name || 'Government Scheme',
+                data.id
+            ).catch(err => console.error('[Email] App submitted email failed:', err));
+        }
+
         return { data: transformApplicationData(data), error };
     },
 
@@ -382,8 +394,35 @@ export const adminHelpers = {
                 last_updated: new Date().toISOString()
             })
             .eq('id', id)
-            .select()
+            .select('*, policies(name, benefit_amount)')
             .single();
+
+        // Send status update email (fire-and-forget)
+        if (data && !error) {
+            // Fetch user profile for email
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('full_name, email')
+                .eq('id', data.user_id)
+                .single();
+
+            if (profile) {
+                const policyName = data.policies?.name || 'Government Scheme';
+                emailApi.sendApplicationStatus(
+                    profile.full_name || profile.email, profile.email,
+                    policyName, status, data.remarks
+                ).catch(err => console.error('[Email] Status email failed:', err));
+
+                // If approved, also send payment email
+                if (status === 'approved' && data.policies?.benefit_amount) {
+                    emailApi.sendPayment(
+                        profile.full_name || profile.email, profile.email,
+                        policyName, data.policies.benefit_amount
+                    ).catch(err => console.error('[Email] Payment email failed:', err));
+                }
+            }
+        }
+
         return { data, error };
     },
 
@@ -589,6 +628,17 @@ export const ticketHelpers = {
             }])
             .select()
             .single();
+
+        // Send ticket created email (fire-and-forget)
+        if (data && !error) {
+            const userName = user.user_metadata?.name || user.email;
+            emailApi.sendTicketCreated(
+                userName, user.email,
+                ticketData.subject || 'Support Request',
+                data.id
+            ).catch(err => console.error('[Email] Ticket email failed:', err));
+        }
+
         return { data, error };
     },
 
@@ -667,6 +717,23 @@ export const ticketHelpers = {
             .eq('id', ticketId)
             .select()
             .single();
+
+        // Send ticket status email (fire-and-forget)
+        if (data && !error) {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('full_name, email')
+                .eq('id', data.user_id)
+                .single();
+
+            if (profile) {
+                emailApi.sendTicketStatus(
+                    profile.full_name || profile.email, profile.email,
+                    data.subject || 'Support Request', status
+                ).catch(err => console.error('[Email] Ticket status email failed:', err));
+            }
+        }
+
         return { data, error };
     }
 };
