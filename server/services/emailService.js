@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import {
     otpTemplate,
@@ -12,31 +12,32 @@ import {
 
 dotenv.config();
 
-// Gmail SMTP transporter
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-    },
-});
+// Initialize Resend using your API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = `PolicySetu <${process.env.GMAIL_USER}>`;
+// Resend requires emails to be sent FROM a verified domain.
+// While testing on the free tier without a domain, you MUST send from 'onboarding@resend.dev'.
+const FROM_EMAIL = 'PolicySetu <onboarding@resend.dev>';
 
-// Helper: send email with error handling
+// Helper: send email using Resend HTTP API with error handling
 const sendEmail = async (to, subject, html) => {
     try {
-        const info = await transporter.sendMail({
+        const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,
-            to,
+            to: [to],
             subject,
             html,
         });
 
-        console.log(`[Email] Sent to ${to}: "${subject}" (id: ${info.messageId})`);
-        return { success: true, data: info };
+        if (error) {
+            console.error('[Email] Resend API error:', error.message);
+            return { success: false, error: error.message };
+        }
+
+        console.log(`[Email] Sent to ${to}: "${subject}" (id: ${data?.id})`);
+        return { success: true, data };
     } catch (err) {
-        console.error('[Email] Send error:', err.message);
+        console.error('[Email] Execution error:', err.message);
         return { success: false, error: err.message };
     }
 };
