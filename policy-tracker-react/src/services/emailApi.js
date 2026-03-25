@@ -7,7 +7,7 @@ const EXPRESS_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const callEmailApi = async (action, body) => {
     try {
-        const url = isDev
+        const url = import.meta.env.VITE_API_URL || isDev
             ? `${EXPRESS_URL}/api/email/${action}`
             : `/api/email?action=${action}`;
 
